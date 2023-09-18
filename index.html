@@ -45,6 +45,11 @@
         let playerY = 0;
         let isJumping = false;
         let jumpCount = 0;
+        let gameStarted = false; // Flag to indicate if the game has started
+
+        // Gravity-related variables
+        let gravity = 1; // Adjust gravity as needed
+        let isFalling = false;
 
         function movePlayer() {
             player.style.left = playerX + 'px';
@@ -69,10 +74,35 @@
                 setTimeout(fall, 500);
             } else {
                 isJumping = false;
+                isFalling = true;
             }
         }
 
-        document.addEventListener('keydown', function(event) {
+        function applyGravity() {
+            if (isFalling) {
+                playerY += gravity;
+                movePlayer();
+
+                // Check if player touches the ground (adjust the value as needed)
+                if (playerY >= 550) {
+                    playerY = 550; // Prevent the player from falling below the ground
+                    isFalling = false;
+                }
+            }
+        }
+
+        // Function to start the game
+        function startGame() {
+            if (!gameStarted) {
+                gameStarted = true;
+                document.removeEventListener('click', startGame); // Remove click event listener
+                document.addEventListener('keydown', handleKeyPress);
+                setInterval(applyGravity, 20); // Apply gravity continuously
+            }
+        }
+
+        // Function to handle key presses during the game
+        function handleKeyPress(event) {
             if (event.code === 'ArrowLeft') {
                 playerX -= 10;
                 movePlayer();
@@ -82,7 +112,10 @@
             } else if (event.code === 'Space') {
                 jump();
             }
-        });
+        }
+
+        // Add a click event listener to start the game
+        document.addEventListener('click', startGame);
     </script>
 </body>
 </html>
